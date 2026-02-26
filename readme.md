@@ -114,6 +114,8 @@ The main entry point for the SDK.
 | Method | Parameters | Description |
 |--------|------------|-------------|
 | `launch()` | `activity: Activity` | Launches the offerwall |
+| `onReward` | `(Map<String, Any?>) -> Unit` | Callback triggered when a reward is received |
+| `onClose` | `() -> Unit` | Callback triggered when the offerwall is closed |
 
 ### Listening to Events
 
