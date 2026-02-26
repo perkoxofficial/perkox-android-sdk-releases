@@ -182,7 +182,7 @@ offerwall.launch(this);
 ### Common Issues
 
 **1. Offerwall not loading**
-- Verify your `appId` is correct
+- Verify your `appId` and `sdkkey` are correct
 - Check internet connectivity
 - Ensure the `playerId` is not empty
 
