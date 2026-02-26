@@ -117,6 +117,9 @@ The main entry point for the SDK.
 
 ### Listening to Events
 
+> **Note:** ⚠️ Important Note : Do **not** rely on the SDK's reward callbacks to grant rewards to users, as these callbacks only work when the offerwall is launched. Instead, use the postback URL you provided to Perkox to handle rewards on your server, or distribute the reward data to your system using webhooks or similar server-side technologies for accurate and reliable reward processing.
+> **Note:** The `onReward` callback may be called multiple times for the same transaction with different status.
+
 You can listen to reward and close events by setting callbacks before launching the offerwall.
 
 **Kotlin:**
@@ -171,8 +174,6 @@ offerwall.launch(this);
 | `publisher_id` | `Int` | Publisher ID |
 | `player_id` | `String` | Player ID |
 | `timestamp` | `Long` | Event timestamp in milliseconds |
-
-> **Note:** The `onReward` callback may be called multiple times for the same transaction with different status.
 
 ### Common Issues
 
