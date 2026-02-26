@@ -108,7 +108,7 @@ The main entry point for the SDK.
 
 | Method | Parameters | Returns | Description |
 |--------|------------|---------|-------------|
-| `create()` | `appId: String`, `playerId: String` | `Offerwall` | Creates a new Offerwall instance |
+| `create()` | `appId: String`, `sdkKey: String`, `playerId: String` | `Offerwall` | Creates a new Offerwall instance |
 
 ### Offerwall
 | Method | Parameters | Description |
