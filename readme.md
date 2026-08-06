@@ -9,7 +9,7 @@ A lightweight Android SDK for integrating the Perkox Offerwall into your mobile 
 | Requirement | Version |
 |-------------|---------|
 | Android minSdk | 21 (Android 5.0 Lollipop) |
-| Android targetSdk | 33 |
+| Android targetSdk | 36 |
 | Java | 17 |
 | Kotlin | 1.9.0+ |
 | AndroidX | Required |
@@ -181,10 +181,11 @@ offerwall.launch(this);
 
 ### Common Issues
 
-**1. Offerwall not loading**
-- Verify your `appId` and `sdkkey` are correct
-- Check internet connectivity
-- Ensure the `playerId` is not empty
+**1. Offerwall loading with 0 offers**
+- Verify your application package name (`applicationContext.packageName`) matches the exact Package ID registered for your `appId` in the Perkox Publisher Dashboard (`https://pub.perkox.com`).
+- Verify your `appId` and `sdkKey` are correct.
+- Ensure the `playerId` is not empty.
+- Check internet connectivity.
 
 **2. AAR not found**
 - Make sure the `.aar` file is in the `libs` folder
@@ -198,6 +199,11 @@ offerwall.launch(this);
 ---
 
 ## Changelog
+
+### v1.0.1
+- Upgraded `compileSdk` and `targetSdk` to 36
+- Optimized background thread execution for URL construction
+- Added Package ID validation documentation
 
 ### v1.0.0
 - Initial release
