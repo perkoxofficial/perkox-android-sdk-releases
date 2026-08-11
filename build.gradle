@@ -1,0 +1,52 @@
+plugins {
+    id 'maven-publish'
+}
+
+group = 'com.github.perkoxofficial'
+version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.1'
+
+// Helper function to resolve the target AAR file
+def getAarFile() {
+    def candidates = [
+        file("v${version}/perkox-android-sdk-release.aar"),
+        file("${version}/perkox-android-sdk-release.aar"),
+        file("perkox-android-sdk-release.aar"),
+        file("v1.0.1/perkox-android-sdk-release.aar")
+    ]
+    for (File f : candidates) {
+        if (f.exists()) {
+            return f
+        }
+    }
+    return file("perkox-android-sdk-release.aar")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.hasProperty('group') ? project.group : 'com.github.perkoxofficial'
+            artifactId = 'perkox-android-sdk-releases'
+            version = project.version
+
+            artifact(getAarFile()) {
+                extension = 'aar'
+            }
+
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                def appcompat = dependenciesNode.appendNode('dependency')
+                appcompat.appendNode('groupId', 'androidx.appcompat')
+                appcompat.appendNode('artifactId', 'appcompat')
+                appcompat.appendNode('version', '1.6.1')
+                appcompat.appendNode('scope', 'runtime')
+
+                def coreKtx = dependenciesNode.appendNode('dependency')
+                coreKtx.appendNode('groupId', 'androidx.core')
+                coreKtx.appendNode('artifactId', 'core-ktx')
+                coreKtx.appendNode('version', '1.10.1')
+                coreKtx.appendNode('scope', 'runtime')
+            }
+        }
+    }
+}

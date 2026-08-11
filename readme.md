@@ -26,41 +26,56 @@ The SDK requires the following permission (automatically included via manifest m
 
 ## Installation
 
-### Step 1: Download the AAR
+### Option 1: Gradle with JitPack (Recommended)
 
-Download the latest and`perkox-android-sdk-release.aar` from the [GitHub Releases](https://github.com/perkoxofficial/perkox-android-sdk-releases/releases) page.
+1. Add the JitPack repository to your root `settings.gradle` (or project-level `build.gradle`):
 
-### Step 2: Add the AAR to Your Project
-
-1. Copy the downloaded `.aar` file to your app's `libs` folder:
+   **`settings.gradle` (Dependency Resolution Mode):**
+   ```groovy
+   dependencyResolutionManagement {
+       repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+       repositories {
+           google()
+           mavenCentral()
+           maven { url 'https://jitpack.io' }
+       }
+   }
    ```
-   your-app/
-   └── app/
-       └── libs/
-           └── perkox-android-sdk-release.aar
-   ```
 
-2. Add the following to your app-level `build.gradle` or `build.gradle.kts`:
+2. Add the Perkox SDK dependency to your app-level `build.gradle` or `build.gradle.kts`:
 
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation files('libs/perkox-android-sdk-release.aar')
-       
-       // Required dependencies
-       implementation 'androidx.appcompat:appcompat:1.6.1'
-       implementation 'androidx.core:core-ktx:1.10.1'
+       implementation 'com.github.perkoxofficial:perkox-android-sdk-releases:1.0.1'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation(files("libs/perkox-android-sdk-release.aar"))
-       
-       // Required dependencies
-       implementation("androidx.appcompat:appcompat:1.6.1")
-       implementation("androidx.core:core-ktx:1.10.1")
+       implementation("com.github.perkoxofficial:perkox-android-sdk-releases:1.0.1")
+   }
+   ```
+
+---
+
+### Option 2: Manual AAR Integration
+
+1. Download `perkox-android-sdk-release.aar` from the [GitHub Releases](https://github.com/perkoxofficial/perkox-android-sdk-releases/releases) page.
+2. Copy the downloaded `.aar` file to your app's `libs` folder:
+   ```
+   your-app/
+   └── app/
+       └── libs/
+           └── perkox-android-sdk-release.aar
+   ```
+3. Add the following to your app-level `build.gradle`:
+   ```groovy
+   dependencies {
+       implementation files('libs/perkox-android-sdk-release.aar')
+       implementation 'androidx.appcompat:appcompat:1.6.1'
+       implementation 'androidx.core:core-ktx:1.10.1'
    }
    ```
 
