@@ -47,14 +47,14 @@ The SDK requires the following permission (automatically included via manifest m
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation 'com.perkox:perkox-android-sdk:1.0.3'
+       implementation 'com.perkox:perkox-android-sdk:1.0.4'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation("com.perkox:perkox-android-sdk:1.0.3")
+       implementation("com.perkox:perkox-android-sdk:1.0.4")
    }
    ```
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.perkox'
-version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.3'
+version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.4'
 
 // Helper function to resolve the target AAR file
 def getAarFile() {
@@ -12,6 +12,7 @@ def getAarFile() {
         file("v${version}/perkox-android-sdk-release.aar"),
         file("${version}/perkox-android-sdk-release.aar"),
         file("perkox-android-sdk-release.aar"),
+        file("v1.0.4/perkox-android-sdk-release.aar"),
         file("v1.0.3/perkox-android-sdk-release.aar"),
         file("v1.0.1/perkox-android-sdk-release.aar")
     ]
