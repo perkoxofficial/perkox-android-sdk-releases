@@ -28,7 +28,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = project.hasProperty('group') ? project.group : 'com.perkox'
-            artifactId = 'perkox-android-sdk'
+            artifactId = 'perkox-android-sdk-releases'
             version = project.version
 
             artifact(getAarFile()) {
