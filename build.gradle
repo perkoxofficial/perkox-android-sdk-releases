@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'com.github.perkoxofficial'
-version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.1'
+group = 'com.perkox'
+version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.3'
 
 // Helper function to resolve the target AAR file
 def getAarFile() {
@@ -12,6 +12,7 @@ def getAarFile() {
         file("v${version}/perkox-android-sdk-release.aar"),
         file("${version}/perkox-android-sdk-release.aar"),
         file("perkox-android-sdk-release.aar"),
+        file("v1.0.3/perkox-android-sdk-release.aar"),
         file("v1.0.1/perkox-android-sdk-release.aar")
     ]
     for (File f : candidates) {
@@ -25,8 +26,8 @@ def getAarFile() {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = project.hasProperty('group') ? project.group : 'com.github.perkoxofficial'
-            artifactId = 'perkox-android-sdk-releases'
+            groupId = project.hasProperty('group') ? project.group : 'com.perkox'
+            artifactId = 'perkox-android-sdk'
             version = project.version
 
             artifact(getAarFile()) {
