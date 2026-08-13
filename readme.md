@@ -18,10 +18,12 @@ A lightweight Android SDK for integrating the Perkox Offerwall into your mobile 
 
 ## Permissions
 
-The SDK requires the following permission (automatically included via manifest merging):
+The SDK automatically includes the necessary permissions via manifest merging:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 ```
 
 ## Installation
@@ -47,14 +49,14 @@ The SDK requires the following permission (automatically included via manifest m
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation 'com.perkox:perkox-android-sdk-releases:1.0.5'
+       implementation 'com.perkox:perkox-android-sdk-releases:2.0.0'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation("com.perkox:perkox-android-sdk-releases:1.0.5")
+       implementation("com.perkox:perkox-android-sdk-releases:2.0.0")
    }
    ```
 

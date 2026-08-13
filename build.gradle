@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.perkox'
-version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '1.0.5'
+version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '2.0.0'
 
 publishing {
     publications {
@@ -31,6 +31,12 @@ publishing {
                 coreKtx.appendNode('artifactId', 'core-ktx')
                 coreKtx.appendNode('version', '1.10.1')
                 coreKtx.appendNode('scope', 'runtime')
+
+                def playServicesAds = dependenciesNode.appendNode('dependency')
+                playServicesAds.appendNode('groupId', 'com.google.android.gms')
+                playServicesAds.appendNode('artifactId', 'play-services-ads-identifier')
+                playServicesAds.appendNode('version', '18.2.0')
+                playServicesAds.appendNode('scope', 'runtime')
             }
         }
     }
