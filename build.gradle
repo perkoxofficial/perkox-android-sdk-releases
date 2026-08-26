@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.perkox'
-version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '2.0.1'
+version = project.hasProperty('version') && project.version != 'unspecified' ? project.version : '2.0.3'
 
 publishing {
     publications {
