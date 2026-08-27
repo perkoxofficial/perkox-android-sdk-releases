@@ -1,0 +1,52 @@
+# Release repo for the Android SDK, distributed through JitPack.
+#
+# The artifact IS the deliverable — a corrupt or missing .aar is the whole
+# failure, and JitPack will happily serve it. An .aar is a zip; if it does not
+# open as one, or carries no classes.jar, consumers get a dependency that
+# resolves and then fails to link.
+#
+# Also checks jitpack.yml parses, because a malformed build config there makes
+# JitPack fall back to defaults silently rather than reporting an error.
+
+name: Check
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The published .aar must be a real archive
+        run: |
+          python3 - <<'PY'
+          import glob, sys, zipfile
+          aars = glob.glob('*.aar') + glob.glob('**/*.aar', recursive=True)
+          aars = sorted(set(aars))
+          print(f"aar files: {aars or 'none'}")
+          fail = []
+          if not aars:
+              fail.append("no .aar in the repo — there is nothing to publish")
+          for a in aars:
+              if not zipfile.is_zipfile(a):
+                  fail.append(f"{a} is not a valid archive")
+                  continue
+              names = zipfile.ZipFile(a).namelist()
+              if 'classes.jar' not in names:
+                  fail.append(f"{a} contains no classes.jar ({len(names)} entries)")
+              else:
+                  print(f"{a}: ok, {len(names)} entries")
+          if fail:
+              for f in fail: print("::error::" + f)
+              sys.exit(1)
+          PY
+
+      - name: jitpack.yml must parse
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 -c "import yaml;d=yaml.safe_load(open('jitpack.yml'));print('jitpack.yml ok:',d)"
