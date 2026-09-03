@@ -49,14 +49,14 @@ The SDK automatically includes the necessary permissions via manifest merging:
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation 'com.perkox:perkox-android-sdk-releases:2.0.6'
+       implementation 'com.perkox:perkox-android-sdk-releases:2.0.7'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation("com.perkox:perkox-android-sdk-releases:2.0.6")
+       implementation("com.perkox:perkox-android-sdk-releases:2.0.7")
    }
    ```
 
