@@ -49,14 +49,14 @@ The SDK automatically includes the necessary permissions via manifest merging:
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation 'com.perkox:perkox-android-sdk-releases:2.0.8'
+       implementation 'com.perkox:perkox-android-sdk-releases:2.0.9'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation("com.perkox:perkox-android-sdk-releases:2.0.8")
+       implementation("com.perkox:perkox-android-sdk-releases:2.0.9")
    }
    ```
 
@@ -216,6 +216,11 @@ offerwall.launch(this);
 ---
 
 ## Changelog
+
+### v2.0.9
+- Added edge-to-edge support with display cutouts / notches handling
+- Added safe area insets injection to Offerwall Webview (`--android-safe-*`)
+- Improved file upload with system chooser and MIME mapping
 
 ### v1.0.1
 - Upgraded `compileSdk` and `targetSdk` to 36
