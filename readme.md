@@ -49,14 +49,14 @@ The SDK automatically includes the necessary permissions via manifest merging:
    **Groovy (`build.gradle`):**
    ```groovy
    dependencies {
-       implementation 'com.perkox:perkox-android-sdk-releases:2.0.11'
+       implementation 'com.perkox:perkox-android-sdk-releases:2.0.12'
    }
    ```
 
    **Kotlin DSL (`build.gradle.kts`):**
    ```kotlin
    dependencies {
-       implementation("com.perkox:perkox-android-sdk-releases:2.0.11")
+       implementation("com.perkox:perkox-android-sdk-releases:2.0.12")
    }
    ```
 
@@ -125,23 +125,62 @@ The main entry point for the SDK.
 
 | Method | Parameters | Returns | Description |
 |--------|------------|---------|-------------|
-| `create()` | `appId: String`, `sdkKey: String`, `playerId: String` | `Offerwall` | Creates a new Offerwall instance |
+| `create()` | `appId: String`, `sdkKey: String`, `playerId: String`, `beta: Boolean = false` | `Offerwall` | Creates a new Offerwall instance. |
+| `syncPendingRewards()` | `appId: String`, `sdkKey: String`, `playerId: String`, `beta: Boolean = false`, `callback?: (List<Map<String, Any?>>) -> Unit` | `Unit` | Synchronizes pending rewards completed while the app was closed. |
 
 ### Offerwall
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `launch()` | `activity: Activity` | Launches the offerwall |
-| `onReward` | `(Map<String, Any?>) -> Unit` | Callback triggered when a reward is received |
-| `onClose` | `() -> Unit` | Callback triggered when the offerwall is closed |
+| Method / Property | Type / Parameters | Description |
+|-------------------|-------------------|-------------|
+| `launch()` | `activity: Activity` | Launches the offerwall activity and automatically syncs pending rewards. |
+| `onReward` | `((Map<String, Any?>) -> Unit)?` | Callback triggered when a reward is received (supports all dynamic server fields). |
+| `onClose` | `(() -> Unit)?` | Callback triggered when the offerwall is closed. |
 
-### Listening to Events
+---
 
-> **Note:** ⚠️ Important Note : Do **not** rely on the SDK's reward callbacks to grant rewards to users, as these callbacks only work when the offerwall is launched. Instead, use the postback URL you provided to Perkox to handle rewards on your server, or distribute the reward data to your system using webhooks or similar server-side technologies for accurate and reliable reward processing.
+### ⚡ Offline & Pending Rewards Auto-Sync
 
+When users complete offers (e.g. reaching a game level, finishing surveys) outside of your application while your app is closed or suspended, rewards are **never lost**:
 
-> **Note:** The `onReward` callback may be called multiple times for the same transaction with different status.
+1. **Automatic Sync on Launch:** When `offerwall.launch(this)` is called, the SDK automatically queries the backend for pending rewards, delivers them to your `onReward` listener on the Main Thread, and acknowledges receipt to avoid duplicate crediting.
+2. **Explicit Background Sync:** You can also check for rewards on app startup or user login without launching the offerwall UI:
 
-You can listen to reward and close events by setting callbacks before launching the offerwall.
+**Kotlin:**
+```kotlin
+PerkoxOfferwall.syncPendingRewards(
+    appId = "YOUR_APP_ID",
+    sdkKey = "YOUR_SDK_KEY",
+    playerId = "Player_123"
+) { rewards ->
+    for (reward in rewards) {
+        val amount = reward["amount"]
+        val txid = reward["txid"]
+        val offerName = reward["offer_name"]
+        Log.d("Perkox", "Synced offline reward: $amount pts (TxID: $txid, Offer: $offerName)")
+    }
+}
+```
+
+**Java:**
+```java
+PerkoxOfferwall.INSTANCE.syncPendingRewards(
+    "YOUR_APP_ID",
+    "YOUR_SDK_KEY",
+    "Player_123",
+    false, // beta
+    rewards -> {
+        for (Map<String, Object> reward : rewards) {
+            System.out.println("Synced reward: " + reward.get("amount") + " (TxID: " + reward.get("txid") + ")");
+        }
+        return null;
+    }
+);
+```
+
+---
+
+### Listening to Events & Dynamic Reward Payloads
+
+Server parameters (such as `click_id`, `cid`, `offer_id`, `sub1`..`sub5`, `payout`, `amount`, `status`) are **100% dynamically preserved** and accessible directly from the reward map:
 
 **Kotlin:**
 
@@ -149,11 +188,14 @@ You can listen to reward and close events by setting callbacks before launching 
 val offerwall = PerkoxOfferwall.create("YOUR_APP_ID", "YOUR_SDK_KEY", "Player_123")
 
 offerwall.onReward = { reward ->
-    val amount = reward["amount"]   // Double - reward amount
-    val status = reward["status"]   // String - "pending" or "approved"
-    val txid = reward["txid"]       // String - unique transaction ID
-    val playerId = reward["player_id"] // String - player ID
-    Log.d("Perkox", "Reward received! Amount: $amount, Status: $status")
+    val amount = reward["amount"]       // Reward amount credited
+    val status = reward["status"]       // "approved", "pending", etc.
+    val txid = reward["txid"]           // Unique transaction or click ID
+    val playerId = reward["player_id"] // Player ID
+    val clickId = reward["click_id"]   // Advertiser / tracker click ID
+    val offerId = reward["offer_id"]   // Completed offer ID
+
+    Log.d("Perkox", "Reward received! Amount: $amount, TxID: $txid, Offer: $offerId")
 }
 
 offerwall.onClose = {
@@ -173,7 +215,9 @@ offerwall.setOnReward(reward -> {
     String status = (String) reward.get("status");
     String txid = (String) reward.get("txid");
     String playerId = (String) reward.get("player_id");
-    Log.d("Perkox", "Reward received! Amount: " + amount + ", Status: " + status);
+    Object clickId = reward.get("click_id");
+    
+    Log.d("Perkox", "Reward received! Amount: " + amount + ", TxID: " + txid);
     return null;
 });
 
@@ -189,12 +233,16 @@ offerwall.launch(this);
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `amount` | `Double` | The reward amount |
-| `txid` | `String` | Unique transaction ID |
-| `status` | `String` | `"pending"` / `"approved"` / `"reversed"` / `"rejected"` |
-| `publisher_id` | `Int` | Publisher ID |
-| `player_id` | `String` | Player ID |
-| `timestamp` | `Long` | Event timestamp in milliseconds |
+| `amount` / `payout` | `Double` / `Number` | The reward points or currency amount |
+| `txid` | `String` | Unique transaction identifier |
+| `status` | `String` | `"approved"`, `"pending"`, `"reversed"`, `"rejected"` |
+| `player_id` | `String` | The player / user identifier |
+| `click_id` | `String` | The conversion click ID (dynamic) |
+| `offer_id` | `Any` | Offer ID (dynamic) |
+| `offer_name` | `String` | Name of the completed offer (when available) |
+| `...custom` | `Any?` | All custom advertiser/postback parameters preserved dynamically |
+
+> **Anti-Duplicate Guarantee:** The SDK automatically acknowledges claimed reward transaction IDs to the backend (`POST /rewards/claim`), guaranteeing idempotent delivery across app restarts.
 
 ### Common Issues
 
@@ -216,11 +264,6 @@ offerwall.launch(this);
 ---
 
 ## Changelog
-
-### v1.0.1
-- Upgraded `compileSdk` and `targetSdk` to 36
-- Optimized background thread execution for URL construction
-- Added Package ID validation documentation
 
 ### v1.0.0
 - Initial release
