@@ -9,6 +9,9 @@
 # JitPack fall back to defaults silently rather than reporting an error.
 
 name: Check
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
